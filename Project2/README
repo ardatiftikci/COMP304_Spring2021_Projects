@@ -1,0 +1,12 @@
+All parts are fully working.
+
+Implementation Details: (Some of them are already written as comments in code.c)
+We kept all commentators in waiting state regardless of generating an answer. We first signaled ones who generated an answer, then signaled others. Our implementation does not depend on the probability that at least one commentator will generate an answer. Therefore, we do not do any special thing to handle 0 answer case. Keeping commentators that did not generate an answer in waiting state and signaling them allows us to not worry about 0 answer case.
+Main thread enters a loop after creating all other threads and it tries to generate (depending on probability) a breaking event if there is no breaking event, then it sleeps for 1 second. If it generates a breaking event, it signals breaking_news_thread. This thread signals another condition variable (break_cond2) and currently talking commentator cuts short.
+
+We changed given pthread_sleep function to pthread_sleepv2 with following change:
+We used global condition variable break_cond2 in pthread_condtimedwait and it allows us to force the commentator to cut short when there is a breaking event.
+Also, we created another method pthread_sleep_breaking_news, it is only a special case of original pthread_sleep which sleeps the thread for 5 seconds.
+
+Arda Tiftikçi 69395
+Ömer Faruk Aksoy 68640
